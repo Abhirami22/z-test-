@@ -1,0 +1,32 @@
+import pandas as pd
+from scipy import stats
+import math
+
+H0="The means of alcoholic students and academics have no significant association"
+H1="The means of alcoholic students and academics  have a significant associaion."
+
+def ztest(x1,x2,s1,s2,n1,n2):
+  z = abs(((x1-x2)/math.sqrt((s1**2/n1)+(s2**2/n2))))
+  return z
+
+data=pd.read_csv("student-por.csv")
+alcohol = data["Walc"]
+clean_alcohol = alcohol.dropna()
+academics = data["G1"]
+clean_academics = academics.dropna()
+
+x1 = data["Walc"].mean()
+x2 = data["G1"].mean()
+s1 = data["Walc"].std()
+s2 = data["G1"].std()
+n1 = len(data["Walc"])
+n2 = len(data["G1"])
+z = ztest(x1,x2,s1,s2,n1,n2)
+print("When x1=",x1,"\nx2=",x2,"\ns1=",s1,"\ns2=",s2,"\nn1=",n1,"\nn2=",n2)#all details
+print("\nCalculated Z value=", z)
+z_table_value = 1.645
+if z<z_table_value:
+  print("Failed to reject H0, as z value is", z, "and table value of z is ", z_table_value,"\nConclusion:",H0)
+else:
+  print("Reject H0 and accept H1, as z value is",z, "and table value of z is ", z_table_value,"\nConclusion:",H1)
+print("\nProof:",data[["Walc","G1"]].describe())
